@@ -9,6 +9,10 @@
 #import "ViewController.h"
 #import "MyCollectionViewCell.h"
 
+#define PixelWidth (1 / [UIScreen mainScreen].scale)
+static NSUInteger columnCount = 4;
+static NSUInteger maxRowCount = 3;
+
 @interface ViewController () <UICollectionViewDataSource, UICollectionViewDelegate>
 @property (nonatomic, weak) IBOutlet NSLayoutConstraint *leadingConstrant;
 @property (nonatomic, weak) IBOutlet NSLayoutConstraint *heightConstraint;
@@ -16,14 +20,7 @@
 @property (nonatomic) NSInteger itemCount;
 @end
 
-
-#define PixelWidth (1 / [UIScreen mainScreen].scale)
-static NSUInteger columnCount = 4;
-static NSUInteger maxRowCount = 3;
-
 @implementation ViewController
-
-
 #pragma mark - Life Cycle
 - (void)viewDidLoad {
     [super viewDidLoad];

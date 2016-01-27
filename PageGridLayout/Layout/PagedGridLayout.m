@@ -101,6 +101,8 @@ static NSString *decorationKind = @"lineDecoration";
     return _decorationAttributes;
 }
 
+
+#pragma mark - Override Methods
 - (void)prepareLayout {
     [super prepareLayout];
     
