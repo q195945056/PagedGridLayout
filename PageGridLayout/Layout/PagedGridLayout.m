@@ -135,7 +135,7 @@ static NSString *decorationKind = @"lineDecoration";
     
     // Add horizontal seperator lines
     for (NSInteger i = 0; i != self.actualRowCount + 1; ++i) {
-        NSIndexPath *indexPath = [NSIndexPath indexPathForItem:itemCount + i inSection:0];
+        NSIndexPath *indexPath = [NSIndexPath indexPathForItem:i inSection:0];
         UICollectionViewLayoutAttributes *decorationAttributes = [UICollectionViewLayoutAttributes layoutAttributesForDecorationViewOfKind:decorationKind withIndexPath:indexPath];
         CGFloat y = i * (itemHeight + self.seperatorLineWidth);
         decorationAttributes.frame = CGRectMake(0, y, self.collectionView.frame.size.width * pageCount, self.seperatorLineWidth);
@@ -145,7 +145,7 @@ static NSString *decorationKind = @"lineDecoration";
     
     // Add vertical seperator lines
     for (NSInteger i = 1; i != pageCount * self.columnCount; ++i) {
-        NSIndexPath *indexPath = [NSIndexPath indexPathForItem:itemCount + self.actualRowCount + i inSection:0];
+        NSIndexPath *indexPath = [NSIndexPath indexPathForItem:self.actualRowCount + i inSection:0];
         UICollectionViewLayoutAttributes *decorationAttributes = [UICollectionViewLayoutAttributes layoutAttributesForDecorationViewOfKind:decorationKind withIndexPath:indexPath];
         CGFloat x = i * (itemWidth + self.seperatorLineWidth);
         decorationAttributes.frame = CGRectMake(x, 0, self.seperatorLineWidth, self.collectionView.frame.size.height);
