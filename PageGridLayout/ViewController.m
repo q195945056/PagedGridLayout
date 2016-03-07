@@ -26,8 +26,8 @@ static NSUInteger maxRowCount = 3;
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
-    CGFloat lineWidth = PixelWidth;
-    self.leadingConstrant.constant = -PixelWidth;
+    CGFloat lineWidth = 1;
+    self.leadingConstrant.constant = -1;
     self.itemCount = 27;
     NSInteger rowCount = MIN(maxRowCount, self.itemCount / columnCount + (self.itemCount % columnCount ? 1 : 0));
     CGFloat itemWidth = ([UIScreen mainScreen].bounds.size.width + lineWidth) / 4 - lineWidth;
