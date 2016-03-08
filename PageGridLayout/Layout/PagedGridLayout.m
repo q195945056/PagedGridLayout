@@ -21,7 +21,7 @@ static NSString *decorationKind = @"lineDecoration";
 - (instancetype)initWithFrame:(CGRect)frame {
     self = [super initWithFrame:frame];
     if (self) {
-        self.backgroundColor = [UIColor colorWithRed:222.0 / 255.0 green:222.0 / 255.0 blue:222.0 / 255.0 alpha:1];
+        self.backgroundColor = [UIColor lightGrayColor];
     }
     return self;
 }
@@ -32,6 +32,7 @@ static NSString *decorationKind = @"lineDecoration";
 
 @property (nonatomic, strong) NSMutableArray *itemAttributes;
 @property (nonatomic, strong) NSMutableDictionary *decorationAttributes;
+
 @property (nonatomic) NSUInteger numberOfPage;
 @property (nonatomic) NSUInteger actualRowCount;
 
@@ -42,7 +43,7 @@ static NSString *decorationKind = @"lineDecoration";
 #pragma mark - Init
 - (void)commonInit
 {
-    _columnCount = 4;
+    _columnCount = 3;
     _maxRowCount = 3;
     _seperatorLineWidth = 1 / [UIScreen mainScreen].scale;
     [self registerClass:[LineDecorationView class] forDecorationViewOfKind:decorationKind];
@@ -124,20 +125,23 @@ static NSString *decorationKind = @"lineDecoration";
 #pragma mark - Override Methods
 - (void)prepareLayout {
     [super prepareLayout];
+    [self.itemAttributes removeAllObjects];
+    [self.decorationAttributes removeAllObjects];
     
-    self.collectionView.bounces = NO;
-    self.collectionView.pagingEnabled = YES;
-    self.collectionView.showsHorizontalScrollIndicator = NO;
+    CGRect frame = self.collectionView.bounds;
     
     NSInteger itemCount = [self.collectionView numberOfItemsInSection:0];
     NSInteger pageCount = self.columnCount * self.maxRowCount;
     self.numberOfPage = itemCount / pageCount + (itemCount % pageCount ? 1 : 0);
     self.actualRowCount = MIN(self.maxRowCount, itemCount / self.columnCount + (itemCount % self.columnCount ? 1 : 0));
+    if (self.actualRowCount == 0) {
+        return;
+    }
     
-    CGRect frame = self.collectionView.bounds;
+    
     CGFloat itemHeight = (CGRectGetHeight(frame) - (self.actualRowCount + 1) * self.seperatorLineWidth) / self.actualRowCount;
-    [self.itemAttributes removeAllObjects];
-    [self.decorationAttributes removeAllObjects];
+    
+    if (CGRectGetHeight(frame) == 0) return;
     for (NSInteger i = 0; i != itemCount; ++i) {
         NSInteger pageNumber = i / pageCount;
         NSInteger indexInPage = i % pageCount;
@@ -145,6 +149,7 @@ static NSString *decorationKind = @"lineDecoration";
         NSInteger rowNumber = indexInPage / self.columnCount;
         NSIndexPath *indexPath = [NSIndexPath indexPathForItem:i inSection:0];
         UICollectionViewLayoutAttributes *attributes = [UICollectionViewLayoutAttributes layoutAttributesForCellWithIndexPath:indexPath];
+        
         
         CGFloat x = [self seperatorLineOriginXForColumnNumber:columnNumber] + self.seperatorLineWidth + pageNumber * CGRectGetWidth(frame);
         CGFloat y = rowNumber * (itemHeight + self.seperatorLineWidth) + self.seperatorLineWidth;
@@ -155,17 +160,17 @@ static NSString *decorationKind = @"lineDecoration";
     
     // Add horizontal seperator lines
     for (NSInteger i = 0; i != self.actualRowCount + 1; ++i) {
-        NSIndexPath *indexPath = [NSIndexPath indexPathForItem:i inSection:0];
+        NSIndexPath *indexPath = [NSIndexPath indexPathForItem:itemCount + i inSection:0];
         UICollectionViewLayoutAttributes *decorationAttributes = [UICollectionViewLayoutAttributes layoutAttributesForDecorationViewOfKind:decorationKind withIndexPath:indexPath];
         CGFloat y = i * (itemHeight + self.seperatorLineWidth);
-        decorationAttributes.frame = CGRectMake(0, y, self.collectionView.frame.size.width * pageCount, self.seperatorLineWidth);
+        decorationAttributes.frame = CGRectMake(0, y, self.collectionView.frame.size.width * self.numberOfPage, self.seperatorLineWidth);
         decorationAttributes.zIndex = 2;
         self.decorationAttributes[indexPath] = decorationAttributes;
     }
     
     // Add vertical seperator lines
-    for (NSInteger i = 1; i != pageCount * self.columnCount; ++i) {
-        NSIndexPath *indexPath = [NSIndexPath indexPathForItem:self.actualRowCount + i inSection:0];
+    for (NSInteger i = 1; i != self.numberOfPage * self.columnCount; ++i) {
+        NSIndexPath *indexPath = [NSIndexPath indexPathForItem:self.actualRowCount + i + itemCount inSection:0];
         UICollectionViewLayoutAttributes *decorationAttributes = [UICollectionViewLayoutAttributes layoutAttributesForDecorationViewOfKind:decorationKind withIndexPath:indexPath];
         NSInteger page = i / self.columnCount;
         NSInteger column = i % self.columnCount;
@@ -174,7 +179,6 @@ static NSString *decorationKind = @"lineDecoration";
         decorationAttributes.zIndex = 2;
         self.decorationAttributes[indexPath] = decorationAttributes;
     }
-
 }
 
 - (CGSize)collectionViewContentSize {
